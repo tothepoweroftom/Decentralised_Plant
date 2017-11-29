@@ -1,3 +1,4 @@
 build/**
 src/js/papaparse.min.js
 src/js/pricedata.csv
+node_modules/
