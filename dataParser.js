@@ -4,7 +4,7 @@ var csv = require('fast-csv');
 
 module.exports = {
   writeDataToCSV: function(data, filename) {
-    console.log("Writing to CSV " + filename);
+    // console.log("Writing to CSV " + filename + " " + data);
     var ws = fs.createWriteStream(filename);
     csv.write(data, {
         headers: true

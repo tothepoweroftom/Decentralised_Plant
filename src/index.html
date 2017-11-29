@@ -78,12 +78,31 @@
           <div class="col-sm-6 graphS" style="background-color:transparent;" id="graph3"></div>
         </div>
 
+<!-- A little awkward, may need refactoring -->
         <script type="text/javascript">
-          var chart1 = new Chart("data.csv", "graph1", "Mint-Coin Price");
+          var chart1 = new Chart("pricedata.csv", "graph1", "Mint-Coin Price");
           var chart2 = new Chart("data.csv", "graph2", "Moisture Level");
           var chart3 = new Chart("data.csv", "graph3", "Rate of Harvest");
-          // chart1.setLabelX("Time");
-          // chart1.setLabelY("Price (ETH)");
+
+          var intertwo = setInterval(function() {
+            let remaining_leaves = parseInt($('#totalLeaves').html());
+            let total_supply = parseInt($('#mintCoin').html());
+            // var data = {};
+            d3.csv("data.csv", function(error, data) {
+              data.forEach(function(d, i) {
+                if (i === data.length - 1 && data.length > 0) {
+                  let time = stringifyDate();
+                  let value = (100 - d.close) / (remaining_leaves * total_supply);
+                  let data = {
+                    "time": time,
+                    "value": value
+                  };
+                  console.log("intervaltwo " + JSON.stringify(data));
+                  App.sendData(data);
+                }
+              });
+            });
+          }, 1000);
         </script>
 
         <div class="btn-group" style="padding-top:40px;">

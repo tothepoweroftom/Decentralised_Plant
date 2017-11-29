@@ -3,7 +3,7 @@ var csv = require('./dataParser.js');
 var data = [
   ['date', 'close']
 ];
-var dataBufferSize = 25
+var dataBufferSize = 20;
 var count = 0;
 var five = require("johnny-five");
 var board = new five.Board({
@@ -16,23 +16,23 @@ board.on("ready", function() {
   // a sensor connected to an analog (ADC) pin
   var sensor = new five.Sensor({
     pin: "A0",
-    freq: 5000
+    freq: 1000
   });
-  this.samplingInterval(5000);
+  this.samplingInterval(1000);
 
   // When the sensor value changes, log the value
   sensor.on("data", function(value) {
-// Keep size of file to 25 entries
+    // Keep size of file to 25 entries
     if (count < dataBufferSize) {
       var moisture = (0.9 - value / 1024) * 100;
-      console.log("Moisture = " + moisture + "%");
+      // console.log("Moisture = " + moisture + "%");
       data.push([stringifyDate(), moisture.toString()])
       csv.writeDataToCSV(data, "./src/data.csv");
       count += 1
     } else {
-      data.splice(2,1);
+      data.splice(1, 1);
       var moisture = (0.9 - value / 1024) * 100;
-      console.log("Moisture = " + moisture + "%");
+      // console.log("Moisture = " + moisture + "%");
       data.push([stringifyDate(), moisture.toString()])
       csv.writeDataToCSV(data, "./src/data.csv");
 
@@ -66,7 +66,111 @@ function stringifyDate() {
   if (mm < 10) {
     mm = '0' + mm
   }
+  if (ms < 10) {
+    ms = '0' + ms
+  }
 
   today = hh + ":" + ms + ":" + ss + " " + dd + "/" + mm + "/" + yyyy;
   return today;
 }
+
+
+
+
+
+
+// NODE SERVER --------=-=----=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+var express = require('express');
+var app = express();
+var storage = require('node-persist');
+var cors = require('cors');
+app.use(cors({
+  origin: 'http://localhost:3000'
+}));
+var bodyParser = require('body-parser');
+app.use(bodyParser.json()); // for parsing application/json
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+var dataArray = [['date','close']];
+
+
+
+// storage.init({
+//   dir: './src/data'
+// }).catch(function(err) {
+//   console.error(err);
+//   throw err;
+// });
+
+
+app.get('/', function(req, res) {
+  // res.send('Hello World!')
+  // console.log(storage.values());
+})
+
+
+app.get('/price', function(req, res) {
+  // console.log(storage.valuesWithKeyMatch('mintPrice'));
+  // res.send(storage.valuesWithKeyMatch('mintPrice'))
+
+})
+
+
+app.get('/leaves', function(req, res) {
+  // res.send(storage.valuesWithKeyMatch('harvest'));
+  // console.log(storage.valuesWithKeyMatch('harvest'));
+})
+
+app.post('/data', function(req, res) {
+  console.log(req.body);
+
+  if(dataArray.length < dataBufferSize) {
+
+  dataArray.push([req.body['time'],req.body['value']]);
+  console.log(dataArray);
+  csv.writeDataToCSV(dataArray, "./src/pricedata.csv");
+} else {
+  dataArray.splice(1, 1);
+
+  dataArray.push([req.body['time'],req.body['value']]);
+  console.log(dataArray);
+
+  csv.writeDataToCSV(dataArray, "./src/pricedata.csv");
+
+  // console.log(dataArray);
+}
+ res.status(200).end();
+  //
+  // storage.setItem('mintPrice', dataArray).then(
+  //   function() {
+  //     // success
+  //     console.log("Successfully updated storage");
+  //   },
+  //   function() {
+  //     // error
+  //     console.log("Error updating storage");
+  //
+  //   });
+  // // console.log(storage.values());
+
+
+})
+
+app.post('/harvest', function(req, res) {
+  console.log(req.body);
+  // res.status(200).end();
+  storage.setItemSync('harvest', req.body);
+
+
+})
+
+app.put('/data', function(req, res) {
+  res.send('Got a PUT request at /data')
+  console.log(req);
+
+})
+app.listen(3002, function() {
+  console.log('Example app listening on port 3000!');
+});
