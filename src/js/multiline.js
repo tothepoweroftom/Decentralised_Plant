@@ -1,3 +1,7 @@
+
+//Here we should calculate the new mintcoin price.
+//Saving it to the node storage.
+
 function Chart(data, divId, title) {
 
   ///////////////////////////////////////////////////
@@ -117,13 +121,14 @@ function Chart(data, divId, title) {
   ///////////////////////////////////////////////////
   ////////////// Update The Graph ///////////////////
   ///////////////////////////////////////////////////
-
+ if (divId != 'graph3') {
   var inter = setInterval(function() {
     updateData(data, divId);
-  }, 5000);
+  }, 1000);
+}
 
   function updateData(data, divId) {
-
+    console.log(data);
     // Get the data again
     d3.csv(data, function(error, data) {
       data.forEach(function(d) {
@@ -298,4 +303,37 @@ function Chart(data, divId, title) {
 
 
 
+}
+
+
+
+function stringifyDate() {
+  var monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  var today = new Date();
+  var hh = today.getHours();
+  var ms = today.getMinutes();
+  var ss = today.getSeconds();
+  var dd = today.getDate();
+  var mm = today.getMonth() + 1; //January is 0!
+  var yyyy = today.getFullYear() - 2000;
+
+
+  if (dd < 10) {
+    dd = '0' + dd
+  }
+
+  if (ss < 10) {
+    ss = '0' + ss
+  }
+
+  if (mm < 10) {
+    mm = '0' + mm
+  }
+
+  if (ms < 10) {
+    ms = '0' + ms
+  }
+
+  today = hh + ":" + ms + ":" + ss + " " + dd + "/" + mm + "/" + yyyy;
+  return today;
 }

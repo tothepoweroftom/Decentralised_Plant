@@ -22,17 +22,17 @@ function setup() {
   }, 150);
   tree.compute();
   xoff = .0;
-
-  capture = createCapture({
-    audio: false,
-    video: {
-      optional: [{
-        sourceId: 'a8d2153b58f95afaeb2a7c293d4a8d6501ccc5f91157c8cd086dcf6acada66ed' // This will change
-      }]
-    }
-  });
-  capture.size(320, 240);
-  capture.hide();
+  // 
+  // capture = createCapture({
+  //   audio: false,
+  //   video: {
+  //     optional: [{
+  //       sourceId: 'a8d2153b58f95afaeb2a7c293d4a8d6501ccc5f91157c8cd086dcf6acada66ed' // This will change
+  //     }]
+  //   }
+  // });
+  // capture.size(320, 240);
+  // capture.hide();
 
   // We wait x seconds before detecting otherwise modal freezes - leaving the time for the plant to stop moving.
   document.getElementById("closeModal").addEventListener("click", function() {
@@ -43,7 +43,7 @@ function setup() {
 function draw() {
   background(28, 31, 34);
   tree.draw();
-  detectMovement();
+  // detectMovement();
 }
 
 function detectMovement() {
