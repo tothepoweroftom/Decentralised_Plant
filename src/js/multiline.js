@@ -121,14 +121,14 @@ function Chart(data, divId, title) {
   ///////////////////////////////////////////////////
   ////////////// Update The Graph ///////////////////
   ///////////////////////////////////////////////////
- if (divId != 'graph3') {
+ // if (divId != 'graph3') {
   var inter = setInterval(function() {
     updateData(data, divId);
-  }, 1000);
-}
+  }, 10000);
+// }
 
   function updateData(data, divId) {
-    console.log(data);
+    // console.log(data);
     // Get the data again
     d3.csv(data, function(error, data) {
       data.forEach(function(d) {

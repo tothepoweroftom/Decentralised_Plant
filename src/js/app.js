@@ -52,6 +52,13 @@ App = {
       $('#submitButtonLeafPicking').click(function(event) {
         $('#leavesNumberEntry').html(function(i, val) {
           //console.log("the value is:", val);
+          let time = stringifyDate();
+          let data = {
+            "time": time,
+            "value": val
+          };
+          console.log(data);
+          App.sendData(data, "/harvest");
           return App.handlePicking(parseInt(val));
         });
       });
@@ -207,11 +214,11 @@ App = {
   },
 
 
-  sendData: function(data) {
+  sendData: function(data, endpoint) {
     // Sending and receiving data in JSON format using POST method
     //
     var xhr = new XMLHttpRequest();
-    var url = "http://localhost:3002/data";
+    var url = "http://localhost:3002" + endpoint;
     xhr.open("POST", url);
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     var jsondata = JSON.stringify(data);

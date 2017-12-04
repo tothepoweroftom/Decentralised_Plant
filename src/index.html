@@ -82,7 +82,7 @@
         <script type="text/javascript">
           var chart1 = new Chart("pricedata.csv", "graph1", "Mint-Coin Price");
           var chart2 = new Chart("data.csv", "graph2", "Moisture Level");
-          var chart3 = new Chart("data.csv", "graph3", "Rate of Harvest");
+          var chart3 = new Chart("harvestdata.csv", "graph3", "Rate of Harvest");
 
           var intertwo = setInterval(function() {
             let remaining_leaves = parseInt($('#totalLeaves').html());
@@ -97,12 +97,12 @@
                     "time": time,
                     "value": value
                   };
-                  console.log("intervaltwo " + JSON.stringify(data));
-                  App.sendData(data);
+                  // console.log("intervaltwo " + JSON.stringify(data));
+                  App.sendData(data, "/data");
                 }
               });
             });
-          }, 1000);
+          }, 10000);
         </script>
 
         <div class="btn-group" style="padding-top:40px;">

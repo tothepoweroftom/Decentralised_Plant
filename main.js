@@ -94,6 +94,8 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 var dataArray = [['date','close']];
+var harvestArray = [['date','close']];
+
 
 
 
@@ -129,13 +131,13 @@ app.post('/data', function(req, res) {
   if(dataArray.length < dataBufferSize) {
 
   dataArray.push([req.body['time'],req.body['value']]);
-  console.log(dataArray);
+  // console.log(dataArray);
   csv.writeDataToCSV(dataArray, "./src/pricedata.csv");
 } else {
   dataArray.splice(1, 1);
 
   dataArray.push([req.body['time'],req.body['value']]);
-  console.log(dataArray);
+  // console.log(dataArray);
 
   csv.writeDataToCSV(dataArray, "./src/pricedata.csv");
 
@@ -160,8 +162,23 @@ app.post('/data', function(req, res) {
 
 app.post('/harvest', function(req, res) {
   console.log(req.body);
-  // res.status(200).end();
-  storage.setItemSync('harvest', req.body);
+
+  if(harvestArray.length < dataBufferSize) {
+
+  harvestArray.push([req.body['time'],req.body['value']]);
+  console.log(harvestArray);
+  csv.writeDataToCSV(harvestArray, "./src/harvestdata.csv");
+} else {
+  harvestArray.splice(1, 1);
+
+  harvestArray.push([req.body['time'],req.body['value']]);
+  console.log(harvestArray);
+
+  csv.writeDataToCSV(harvestArray, "./src/harvestdata.csv");
+
+  // console.log(dataArray);
+}
+ res.status(200).end();
 
 
 })
