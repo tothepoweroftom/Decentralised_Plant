@@ -7,11 +7,7 @@
     "test": "test"
   },
   "scripts": {
-<<<<<<< HEAD
-    "dev": "node main.js |lite-server",
-=======
     "dev": "lite-server | node main.js",
->>>>>>> master
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -31,10 +27,6 @@
     "jade": "~1.11.0",
     "johnny-five": "^0.11.7",
     "lite-server": "^2.3.0",
-<<<<<<< HEAD
-    "random-word": "^2.0.0"
-  },
-=======
     "mongodb": "^2.2.25",
     "monk": "^4.0.0",
     "morgan": "~1.7.0",
@@ -43,5 +35,4 @@
     "random-word": "^2.0.0",
     "serve-favicon": "~2.3.2"
   }
->>>>>>> master
 }

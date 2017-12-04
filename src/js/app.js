@@ -206,7 +206,19 @@ App = {
     });
   },
 
-<<<<<<< HEAD
+
+  sendData: function(data) {
+    // Sending and receiving data in JSON format using POST method
+    //
+    var xhr = new XMLHttpRequest();
+    var url = "http://localhost:3002/data";
+    xhr.open("POST", url);
+    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    var jsondata = JSON.stringify(data);
+
+    xhr.send(jsondata);
+
+  },
   getHarvests: function() {
 
     return App.contracts.Plant.deployed().then(instance => {
@@ -267,48 +279,6 @@ App = {
     //     console.log(result);
     //   });
     // });
-=======
-  sendData: function(data) {
-      // Sending and receiving data in JSON format using POST method
-      //
-      var xhr = new XMLHttpRequest();
-      var url = "http://localhost:3002/data";
-      xhr.open("POST", url);
-      xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-      var jsondata = JSON.stringify(data);
-
-      xhr.send(jsondata);
-
-  },
-
-  stringifyDate: function() {
-    var monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    var today = new Date();
-    var hh = today.getHours();
-    var ms = today.getMinutes();
-    var ss = today.getSeconds();
-    var dd = today.getDate();
-    var mm = today.getMonth() + 1; //January is 0!
-    var yyyy = today.getFullYear() - 2000;
-
-
-    if (dd < 10) {
-      dd = '0' + dd
-    }
-
-    if (ss < 10) {
-      ss = '0' + ss
-    }
-
-    if (mm < 10) {
-      mm = '0' + mm
-    }
-    if (ms < 10) {
-      ms = '0' + ms
-    }
-    today = hh + ":" + ms + ":" + ss + " " + dd + "/" + mm + "/" + yyyy;
-    return today;
->>>>>>> master
   }
 };
 
@@ -317,7 +287,6 @@ $(function() {
     App.init();
   });
 });
-<<<<<<< HEAD
 
 
 function epochStringifyDate(_unix) {
@@ -347,5 +316,3 @@ function epochStringifyDate(_unix) {
   today = hh + ":" + ms + ":" + ss + " " + dd + "/" + mm + "/" + yyyy;
   return today;
 }
-=======
->>>>>>> master
