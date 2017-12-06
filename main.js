@@ -1,8 +1,13 @@
-var csv = require('./dataParser.js');
+var fs = require('fs');
+var csv = require('fast-csv');
+
 
 var data = [
-  ['date', 'close']
+  ["date", "close"]
 ];
+
+
+
 var dataBufferSize = 20;
 var count = 0;
 var five = require("johnny-five");
@@ -10,39 +15,46 @@ var board = new five.Board({
   repl: false
 });
 
-board.on("ready", function() {
+function writeDataToCSV(data, filename) {
+  // console.log("Writing to CSV " + filename + " " + data);
+  var ws = fs.createWriteStream(filename);
+  csv.write(data, {
+      headers: true
+    })
+    .pipe(ws);
+}
 
-  // Create a new generic sensor instance for
-  // a sensor connected to an analog (ADC) pin
-  var sensor = new five.Sensor({
-    pin: "A0",
-    freq: 1000
-  });
-  this.samplingInterval(1000);
+function readDataFromCSV(dataArray, filename) {
+  var fileStream = fs.createReadStream(filename),
+    parser = csv();
 
-  // When the sensor value changes, log the value
-  sensor.on("data", function(value) {
-    // Keep size of file to 25 entries
-    if (count < dataBufferSize) {
-      var moisture = (0.9 - value / 1024) * 100;
-      // console.log("Moisture = " + moisture + "%");
-      data.push([stringifyDate(), moisture.toString()])
-      csv.writeDataToCSV(data, "./src/data.csv");
-      count += 1
-    } else {
-      data.splice(1, 1);
-      var moisture = (0.9 - value / 1024) * 100;
-      // console.log("Moisture = " + moisture + "%");
-      data.push([stringifyDate(), moisture.toString()])
-      csv.writeDataToCSV(data, "./src/data.csv");
+  fileStream
+    .on("readable", function() {
+      var data;
+      while ((data = fileStream.read()) !== null) {
+        parser.write(data);
+      }
+    })
+    .on("end", function() {
+      parser.end();
+    });
 
+  parser
+    .on("readable", function() {
+      var data;
+      while ((data = parser.read()) !== null) {
+        // console.log(data);
+        dataArray.push(data);
+      }
+    })
+    .on("end", function() {
+      console.log("done");
+      console.log(dataArray);
+      // return dataArray;
 
-    }
+    });
 
-
-  });
-});
-
+}
 
 function stringifyDate() {
   var monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -79,6 +91,51 @@ function stringifyDate() {
 
 
 
+
+
+
+// ARDUINO =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+board.on("ready", function() {
+
+  // Create a new generic sensor instance for
+  // a sensor connected to an analog (ADC) pin
+  var sensor = new five.Sensor({
+    pin: "A0",
+    freq: 1000
+  });
+  this.samplingInterval(1000);
+
+
+
+  // Reload csv data from file
+  readDataFromCSV(data, './src/data.csv');
+
+
+  // When the sensor value changes, log the value
+  sensor.on("data", function(value) {
+    // Keep size of file to 25 entries
+    if (data.length < dataBufferSize) {
+      var moisture = (0.9 - value / 1024) * 100;
+      // console.log("Moisture = " + moisture + "%");
+      data.push([stringifyDate(), moisture.toString()])
+      writeDataToCSV(data, "./src/data.csv");
+      count += 1
+    } else {
+      data.splice(1, 1);
+      var moisture = (0.9 - value / 1024) * 100;
+      // console.log("Moisture = " + moisture + "%");
+      data.push([stringifyDate(), moisture.toString()])
+      writeDataToCSV(data, "./src/data.csv");
+
+
+    }
+
+
+  });
+});
+
+
+
 // NODE SERVER --------=-=----=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 var express = require('express');
@@ -93,8 +150,13 @@ app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({
   extended: true
 }));
-var dataArray = [['date','close']];
-var harvestArray = [['date','close']];
+
+var dataArray = [];
+var harvestArray = [];
+
+readDataFromCSV(dataArray, './src/pricedata.csv');
+readDataFromCSV(harvestArray, './src/harvestdata.csv');
+
 
 
 
@@ -126,24 +188,23 @@ app.get('/leaves', function(req, res) {
 })
 
 app.post('/data', function(req, res) {
-  console.log(req.body);
 
-  if(dataArray.length < dataBufferSize) {
+  if (dataArray.length < dataBufferSize) {
 
-  dataArray.push([req.body['time'],req.body['value']]);
-  // console.log(dataArray);
-  csv.writeDataToCSV(dataArray, "./src/pricedata.csv");
-} else {
-  dataArray.splice(1, 1);
+    dataArray.push([req.body['time'], req.body['value']]);
+    // console.log(dataArray);
+    writeDataToCSV(dataArray, "./src/pricedata.csv");
+  } else {
+    dataArray.splice(1, 1);
 
-  dataArray.push([req.body['time'],req.body['value']]);
-  // console.log(dataArray);
+    dataArray.push([req.body['time'], req.body['value']]);
+    // console.log(dataArray);
 
-  csv.writeDataToCSV(dataArray, "./src/pricedata.csv");
+    writeDataToCSV(dataArray, "./src/pricedata.csv");
 
-  // console.log(dataArray);
-}
- res.status(200).end();
+    // console.log(dataArray);
+  }
+  res.status(200).end();
   //
   // storage.setItem('mintPrice', dataArray).then(
   //   function() {
@@ -163,22 +224,22 @@ app.post('/data', function(req, res) {
 app.post('/harvest', function(req, res) {
   console.log(req.body);
 
-  if(harvestArray.length < dataBufferSize) {
+  if (harvestArray.length < dataBufferSize) {
 
-  harvestArray.push([req.body['time'],req.body['value']]);
-  console.log(harvestArray);
-  csv.writeDataToCSV(harvestArray, "./src/harvestdata.csv");
-} else {
-  harvestArray.splice(1, 1);
+    harvestArray.push([req.body['time'], req.body['value']]);
+    console.log(harvestArray);
+    writeDataToCSV(harvestArray, "./src/harvestdata.csv");
+  } else {
+    harvestArray.splice(1, 1);
 
-  harvestArray.push([req.body['time'],req.body['value']]);
-  console.log(harvestArray);
+    harvestArray.push([req.body['time'], req.body['value']]);
+    console.log(harvestArray);
 
-  csv.writeDataToCSV(harvestArray, "./src/harvestdata.csv");
+    writeDataToCSV(harvestArray, "./src/harvestdata.csv");
 
-  // console.log(dataArray);
-}
- res.status(200).end();
+    // console.log(dataArray);
+  }
+  res.status(200).end();
 
 
 })

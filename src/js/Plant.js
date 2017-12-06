@@ -208,6 +208,8 @@ class Tree {
   }
 
   draw() {
+
+    translate(-40, - 100);
     for (var i = 0; i < this.branches.length - 1; i++) {
       let pos = this.branches[i];
       let posp = this.branches[i + 1];

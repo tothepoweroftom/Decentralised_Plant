@@ -29,7 +29,8 @@ function Chart(data, divId, title) {
 
   // Parse the date / time
   var parseDate = d3.time.format("%H:%M:%S %d/%m/%Y").parse, //%H:%M:%S %d/%m/%Y "%d-%b-%y"
-    formatDate = d3.time.format("%H:%M:%S"), //        formatDateCursor = d3.time.format("%a %b %e %H:%M:%S"),
+    formatDate = d3.time.format("%H:%M:%S"),
+     //        formatDateCursor = d3.time.format("%a %b %e %H:%M:%S"),
     bisectDate = d3.bisector(function(d) {
       return d.date;
     }).left;
@@ -44,7 +45,7 @@ function Chart(data, divId, title) {
 
   // Define the axes
   var xAxis = d3.svg.axis().scale(x)
-    .orient("bottom").ticks(10).outerTickSize(10);
+    .orient("bottom").ticks(20).outerTickSize(5);
 
   // Define the line
   var valueline = d3.svg.line()
@@ -124,7 +125,7 @@ function Chart(data, divId, title) {
  // if (divId != 'graph3') {
   var inter = setInterval(function() {
     updateData(data, divId);
-  }, 10000);
+  }, 1000);
 // }
 
   function updateData(data, divId) {

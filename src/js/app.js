@@ -59,6 +59,11 @@ App = {
           };
           console.log(data);
           App.sendData(data, "/harvest");
+          let remaining_leaves = parseInt($('#totalLeaves').html());
+
+          $('#previousHarvest').html(val)
+          $('#totalLeaves').html(remaining_leaves-val);
+
           return App.handlePicking(parseInt(val));
         });
       });
@@ -108,7 +113,7 @@ App = {
         status.push(stat[i].c);
       }
       console.log(status);
-      $('#mintCoin').text(status[1]);
+      // $('#mintCoin').text(status[1]);
       $('#totalLeaves').text(status[0]);
 
       // Update the UI below
@@ -200,7 +205,6 @@ App = {
       console.log(account);
       return App.contracts.Plant.deployed();
     }).then(function(instance) {
-      s
       plantInstance = instance;
       // Execute leaf picking function
       return plantInstance.send(web3.toWei(_value, "ether"));
