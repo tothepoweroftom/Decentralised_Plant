@@ -4,6 +4,11 @@ let capture;
 let previousPixels;
 let isDetecting = true;
 let timer = 0;
+let myFont;
+
+function preload() {
+  myFont = loadFont('css/LabMedium.ttf');
+}
 
 function setup() {
   //getWebcamDetails();
@@ -16,10 +21,12 @@ function setup() {
 
   // This Object is just used to record the transformation matrix in the recursive Tree compute function for later manipulation
   tf = new Transformer();
+  let leafNum = parseInt($('#totalLeaves').html());
+
   tree = new Tree({
     x: width * .5,
     y: height * 0.7
-  }, 150);
+  }, leafNum);
   tree.compute();
   xoff = .0;
 
@@ -49,7 +56,14 @@ function draw() {
 function detectMovement() {
 
   capture.loadPixels();
-  image(capture, width / 2 - 80, height - 120, 160, 120);
+  image(capture, width / 4 - 80, height - 140, 160, 120);
+  push();
+  fill(255);
+
+  text("Live Camera", width/4 - 70, height);
+  fill(0,200,0);
+  ellipse(width/4 + 20, height - 4, 10, 10);
+  pop();
   var total = 0;
   if (capture.pixels.length > 0) { // don't forget this!
     if (!previousPixels) {
@@ -153,7 +167,30 @@ function drawLeaf(x, y) {
   endShape();
   pop();
 }
+class TreeLeafUI {
+  constructor(_position, _leaves) {
+    this.position = _position;
+    this.leaves = _leaves;
+    this.button = createButton("+");
+    this.button.position(this.position.x +300, this.position.y-60);
 
+  }
+
+  draw() {
+    push();
+    textSize(14);
+    fill(255);
+    text("Number of Leaves", this.position.x, this.position.y);
+    textFont(myFont);
+
+    textSize(70);
+    text(this.leaves, this.position.x, this.position.y - 50);
+    pop();
+
+  }
+
+
+}
 class Tree {
 
   constructor(_rootPos, _leaves) {
@@ -179,6 +216,12 @@ class Tree {
     this.branches = [];
     this.leavesNum = _leaves;
     this.leavesRemove = [];
+    this.id = '1';
+    this.uiPos = {
+      x: this.rootPos.x + 100,
+      y: this.rootPos.y + 200
+    };
+    this.ui = new TreeLeafUI(this.uiPos, this.leavesNum);
   }
 
   compute() {
@@ -210,6 +253,7 @@ class Tree {
   draw() {
 
     translate(-40, - 100);
+
     for (var i = 0; i < this.branches.length - 1; i++) {
       let pos = this.branches[i];
       let posp = this.branches[i + 1];
@@ -232,7 +276,13 @@ class Tree {
       pop();
     }
     xoff += 0.01;
+    push();
+    fill(255);
+    textSize(20);
+    text("Plant " + this.id, this.rootPos.x-30, this.rootPos.y +40);
+    pop();
 
+    this.ui.draw();
     if (this.leavesRemove.length > 0) {
       var outOfSreen = [];
       try {

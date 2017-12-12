@@ -71,6 +71,8 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 .modal-content {
   background: #1f1d22;
   text-align: center;
+  padding: 100px 100px 100px 100px;
+  margin-top: 150px;
 }
 
 .modal-footer {

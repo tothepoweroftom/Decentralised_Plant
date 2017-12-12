@@ -192,13 +192,13 @@ app.post('/data', function(req, res) {
   if (dataArray.length < dataBufferSize) {
 
     dataArray.push([req.body['time'], req.body['value']]);
-    // console.log(dataArray);
+    console.log(dataArray);
     writeDataToCSV(dataArray, "./src/pricedata.csv");
   } else {
     dataArray.splice(1, 1);
 
     dataArray.push([req.body['time'], req.body['value']]);
-    // console.log(dataArray);
+    console.log(dataArray);
 
     writeDataToCSV(dataArray, "./src/pricedata.csv");
 
