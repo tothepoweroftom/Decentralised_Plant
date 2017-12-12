@@ -198,7 +198,7 @@ app.post('/data', function(req, res) {
     dataArray.splice(1, 1);
 
     dataArray.push([req.body['time'], req.body['value']]);
-    console.log(dataArray);
+    // console.log(dataArray);
 
     writeDataToCSV(dataArray, "./src/pricedata.csv");
 

@@ -63,7 +63,6 @@ App = {
 
           $('#previousHarvest').html(val)
           $('#totalLeaves').html(remaining_leaves-val);
-
           return App.handlePicking(parseInt(val));
         });
       });
@@ -115,6 +114,9 @@ App = {
       console.log(status);
       // $('#mintCoin').text(status[1]);
       $('#totalLeaves').text(status[0]);
+      $('#plantBalance').text(status[2]*0.001);
+      console.log("Balance set " + status[2]);
+
 
       // Update the UI below
 

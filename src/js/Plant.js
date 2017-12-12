@@ -73,7 +73,7 @@ function detectMovement() {
         h = capture.height;
       var i = 0;
       var pixels = capture.pixels;
-      var thresholdAmount = 40;
+      var thresholdAmount = 80;
       thresholdAmount *= 3; // 3 for r, g, b
       for (var y = 0; y < h; y++) {
         for (var x = 0; x < w; x++) {
