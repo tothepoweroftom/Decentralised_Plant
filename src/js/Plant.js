@@ -101,7 +101,7 @@ function detectMovement() {
   }
 
   if (total > 8000 && isDetecting && !$('#myModal').hasClass('in') && millis() > 10000) { // threshold gets triggered on initialisation -> wait 15sec
-    $('#myModal').modal('show');
+    // $('#myModal').modal('show');
     console.log("The threshold that triggered it was:", total);
     isDetecting = false;
     timer = millis();

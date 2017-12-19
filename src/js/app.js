@@ -114,7 +114,7 @@ App = {
       console.log(status);
       // $('#mintCoin').text(status[1]);
       $('#totalLeaves').text(status[0]);
-      $('#plantBalance').text(status[2]*0.001);
+      $('#plantBalance').text((status[2]*0.00001).toFixed(4));
       console.log("Balance set " + status[2]);
 
 
